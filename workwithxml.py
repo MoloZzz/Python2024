@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from schedule import Schedule
 from discipline import Discipline
+from lxml import etree
 
 def xml_to_schedule(file_path):
     schedule = Schedule()
@@ -51,3 +52,19 @@ def schedule_to_xml(schedule,filename):
 
     tree = ET.ElementTree(root)
     tree.write(filename, encoding="utf-8", xml_declaration=True)
+
+def validate_xml_with_xsd(xml_file, xsd_file):
+    try:
+        xmlschema_doc = etree.parse(xsd_file)
+        xmlschema = etree.XMLSchema(xmlschema_doc)
+        xml_doc = etree.parse(xml_file)
+        
+        if xmlschema.validate(xml_doc):
+            print("XML документ є відповідним XML схемі.")
+        else:
+            print("XML документ не є відповідним XML схемі.")
+            print(xmlschema.error_log)
+    except etree.XMLSchemaParseError as e:
+        print(f"Помилка парсингу XML схеми: {e}")
+    except etree.XMLSyntaxError as e:
+        print(f"Помилка парсингу XML: {e}")
