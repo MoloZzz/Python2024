@@ -20,13 +20,13 @@ depends_on = None
 def upgrade():
     # Додати дані
     op.bulk_insert(DictionaryScheduleDay.__table__, [
-        {'code': 1, 'label': 'Monday'},
-        {'code': 2, 'label': 'Tuesday'},
-        {'code': 3, 'label': 'Wednesday'},
-        {'code': 4, 'label': 'Thursday'},
-        {'code': 5, 'label': 'Friday'},
-        {'code': 6, 'label': 'Saturday'},
-        {'code': 7, 'label': 'Sunday'}
+        {'code': "Monday", 'label': "Понеділок"},
+        {'code': "Tuesday", 'label': "Вівторок"},
+        {'code': "Wednesday", 'label': "Середа"},
+        {'code': "Thursday", 'label': "Четвер"},
+        {'code': "Friday", 'label': "П'ятниця"},
+        {'code': "Saturday", 'label': "Субота"},
+        {'code': "Sunday", 'label': "Неділя"}
     ])
 
 def downgrade():

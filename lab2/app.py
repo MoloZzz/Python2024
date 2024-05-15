@@ -6,14 +6,6 @@ from dto.discipline import disciplineDTO
 app = Flask(__name__)
 service = ScheduleService()
 
-@app.route('/hello', methods=['GET'])
-def get_hello_controller():
-    print("hello")
-    return jsonify('hello')
-
-@app.route('/schedule', methods=['GET'])
-def get_schedule_controller():
-    return jsonify(service.get_schedule())
 
 @app.route('/schedule/<string:day>', methods=['GET'])
 def get_course_controller(day):

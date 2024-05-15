@@ -21,7 +21,7 @@ class Schedule(Base):
     id = Column(Integer, primary_key=True)
     discipline_id = Column(Integer, ForeignKey('discipline.id'))
     discipline = relationship("Discipline")
-    day_code = Column(Integer, ForeignKey('dictionary_schedule_day.code'))
+    day_code = Column(String, ForeignKey('dictionary_schedule_day.code'))
     day = relationship("DictionaryScheduleDay")
     time = Column(String)
     __table_args__ = (
@@ -31,5 +31,5 @@ class Schedule(Base):
 class DictionaryScheduleDay(Base):
     __tablename__ = 'dictionary_schedule_day'
 
-    code = Column(Integer, primary_key=True)
+    code = Column(String, primary_key=True)
     label = Column(String)

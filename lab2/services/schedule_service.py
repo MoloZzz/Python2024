@@ -24,11 +24,12 @@ class ScheduleService :
         new_discipline = Discipline(name=discipline.name, professor=discipline.professor, credits=discipline.credits)
         self.session.add(new_discipline)
         self.session.commit()
+        self.session.refresh(new_discipline) #можна прибрати, ящко потрібно оптимізувати
         self.session.close()
-        print(f"Додано нову дисципліну: {discipline.name}, {discipline.professor}, {discipline.credits}")
 
         return jsonify({
-            "name": discipline.name,
-            "professor": discipline.professor,
-            "credits": discipline.credits
+            "id": new_discipline.id,
+            "name": new_discipline.name,
+            "professor": new_discipline.professor,
+            "credits": new_discipline.credits
         }), 201
