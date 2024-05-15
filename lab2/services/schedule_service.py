@@ -1,9 +1,12 @@
 from flask import jsonify
 from db.schedule_db import schedule
+from db.models import Discipline
+from db.connection import connectDatabase
 
 class ScheduleService : 
     def __init__(self):
         self.schedule = schedule
+        self.session = connectDatabase()
 
     def get_schedule(self):
         return schedule
@@ -16,8 +19,16 @@ class ScheduleService :
             return None
 
 
-    def add_course(self,request):
-        data = request.get_json()
-        new_course = {"id": len(schedule) + 1, "course": data["course"], "professor": data["professor"]}
-        schedule.append(new_course)
-        return jsonify(new_course), 201
+    def add_discipline(self, discipline):
+
+        new_discipline = Discipline(name=discipline.name, professor=discipline.professor, credits=discipline.credits)
+        self.session.add(new_discipline)
+        self.session.commit()
+        self.session.close()
+        print(f"Додано нову дисципліну: {discipline.name}, {discipline.professor}, {discipline.credits}")
+
+        return jsonify({
+            "name": discipline.name,
+            "professor": discipline.professor,
+            "credits": discipline.credits
+        }), 201

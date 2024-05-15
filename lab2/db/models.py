@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey,UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -11,6 +11,9 @@ class Discipline(Base):
     name = Column(String)
     professor = Column(String)
     credits = Column(Integer)
+    __table_args__ = (
+        UniqueConstraint('name', 'professor'),
+    )
 
 class Schedule(Base):
     __tablename__ = 'schedule'
@@ -21,6 +24,9 @@ class Schedule(Base):
     day_code = Column(Integer, ForeignKey('dictionary_schedule_day.code'))
     day = relationship("DictionaryScheduleDay")
     time = Column(String)
+    __table_args__ = (
+        UniqueConstraint('discipline_id', 'day_code', 'time'),
+    )
 
 class DictionaryScheduleDay(Base):
     __tablename__ = 'dictionary_schedule_day'
