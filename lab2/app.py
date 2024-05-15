@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 from services.schedule_service import ScheduleService
-from db.connection import engine, Session
+#from db.connection import *
+
 app = Flask(__name__)
 service = ScheduleService()
 
