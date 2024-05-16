@@ -16,7 +16,7 @@ def get_discipline_by_id(id):
 def get_all_disciplines():
     return service.getManyDisciplines()
 
-@app.route('/schedule/add', methods=['POST'])
+@app.route('/schedule', methods=['POST'])
 def add_schedule_record():
     try:
         data = request.json
@@ -32,7 +32,7 @@ def add_schedule_record():
     
 @app.route('/schedule/<string:day>', methods=['GET'])
 def get_disciplines_by_day(day):
-    return service.getManyDisciplineByDay(day)
+    return service.getManyDisciplinesByDay(day)
 
 @app.route('/disciplines/add', methods=['POST'])
 def add_discipline():
@@ -57,10 +57,21 @@ def delete_shedule_record_by_id(id):
     response, status_code = service.deleteScheduleRecordById(id)
     return response, status_code
 
-@app.route('/schedule/<string:day>', methods=['DELETE'])
+@app.route('/schedule/day/<string:day>', methods=['DELETE'])
 def delete_shedule_record_by_day(day):
     response, status_code = service.deleteScheduleRecordsByDayCode(day)
     return response, status_code
+
+@app.route('/schedule/professor', methods=['DELETE'])
+def delete_shedule_record_by_professor():
+    response, status_code = service.deleteScheduleRecordsByProfessor(request.json["professor"])
+    return response, status_code
+
+@app.route('/disciplines/professor', methods=['DELETE'])
+def delete_disciplines_by_professor():
+    response, status_code = service.deleteDisciplinesByProfessor(request.json["professor"])
+    return response, status_code
+
 
 
 if __name__ == '__main__':
