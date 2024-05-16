@@ -12,20 +12,24 @@ class ScheduleService :
         self.app = app
         handle_exception(self.app)
 
-    def getOneDisciplineById(self,id):
+    def getOneDisciplineById(self, id, jsonify_result=True):
         try:
             discipline = self.session.query(Discipline).filter_by(id=id).first()  
-            if discipline:  
-                return jsonify({
+            if discipline:
+                result = {
                     "id": discipline.id,
                     "name": discipline.name,
                     "professor": discipline.professor,
                     "credits": discipline.credits
-                }), 200  
+                }
+                if jsonify_result:
+                    return jsonify(result), 200
+                else:
+                    return result
             else:
-                return jsonify({"error": "Discipline not found"}), 404 
+                return jsonify({"error": "Discipline not found"}), 404 if jsonify_result else None
         except Exception as e:
-            return jsonify({"error": "Internal server error", "message": str(e)}), 500
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500 if jsonify_result else None
 
     def getManyDisciplineByDay(self, day):
         try:
@@ -33,7 +37,7 @@ class ScheduleService :
             if scheduleRecords:
                 scheduleRecordsList = [{
                     "id": scheduleRecord.id,
-                    "discipline_id": scheduleRecord.discipline_id,
+                    "discipline_id": self.getOneDisciplineById(scheduleRecord.discipline_id,False)["name"],
                     "day_code": scheduleRecord.day_code,
                     "time": scheduleRecord.time
                 } for scheduleRecord in scheduleRecords]  
