@@ -100,3 +100,58 @@ class ScheduleService :
             return jsonify({"error": "Database error", "message": str(e)}), 500
         except Exception as e:
             return jsonify({"error": "Internal server error", "message": str(e)}), 500
+    
+    def deleteDiscipline(self,id):
+        try:
+            discipline = self.session.query(Discipline).filter_by(id=id).first()
+            if discipline:
+                self.session.delete(discipline)
+                self.session.commit()
+                self.session.close()
+                return jsonify({"message": "Discipline deleted successfully"}), 200
+            else:
+                return jsonify({"error": "Discipline not found"}), 404
+        except IntegrityError as e:
+            self.session.rollback() 
+            return jsonify({"error": "Database error", "message": str(e)}), 500
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500 
+    
+    def deleteScheduleRecordById(self,id):
+        try:
+            schedule = self.session.query(Schedule).filter_by(id=id).first()
+            if schedule:
+                self.session.delete(schedule)
+                self.session.commit()
+                self.session.close()
+                return jsonify({"message": "Schedule record deleted successfully"}), 200
+            else:
+                return jsonify({"error": "Schedule record not found"}), 404
+        except IntegrityError as e:
+            self.session.rollback() 
+            return jsonify({"error": "Database error", "message": str(e)}), 500
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500
+
+    def deleteScheduleRecordsByDayCode(self, day_code):
+        try:
+            schedules = self.session.query(Schedule).filter_by(day_code=day_code).all()
+            
+            if schedules:
+                deleted_count = 0
+                for schedule in schedules:
+                    self.session.delete(schedule)
+                    deleted_count += 1
+                self.session.commit()
+                self.session.close()
+                return jsonify({
+                    "message": f"All {deleted_count} schedule records with day_code {day_code} deleted successfully",
+                    "deleted_count": deleted_count
+                }), 200
+            else:
+                return jsonify({"error": f"No schedule records found with day_code {day_code}"}), 404
+        except IntegrityError as e:
+            self.session.rollback() 
+            return jsonify({"error": "Database error", "message": str(e)}), 500
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500

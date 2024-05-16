@@ -9,15 +9,15 @@ service = ScheduleService(app)
 handle_exception(app)
 
 @app.route('/disciplines/<int:id>', methods=['GET'])
-def getOneDisciplineById(id):
+def get_discipline_by_id(id):
     return service.getOneDisciplineById(id)
 
 @app.route('/disciplines', methods=['GET'])
-def getAllDisciplines():
+def get_all_disciplines():
     return service.getManyDisciplines()
 
 @app.route('/schedule/add', methods=['POST'])
-def newScheduleRecord():
+def add_schedule_record():
     try:
         data = request.json
         discipline_id = data.get('discipline_id')
@@ -31,11 +31,11 @@ def newScheduleRecord():
         return jsonify({"error": "Invalid input", "message": str(e)}), 400
     
 @app.route('/schedule/<string:day>', methods=['GET'])
-def getAllDisciplineByDay(day):
+def get_disciplines_by_day(day):
     return service.getManyDisciplineByDay(day)
 
 @app.route('/disciplines/add', methods=['POST'])
-def newDisciplineRecord():
+def add_discipline():
     try:
         data = request.json
         name, professor, credits = data.get('name'), data.get('professor'), data.get('credits')
@@ -47,5 +47,24 @@ def newDisciplineRecord():
     except ValueError as e:
         return jsonify({"error": "Invalid input", "message": str(e)}), 400
 
+@app.route('/disciplines/<int:id>', methods=['DELETE'])
+def delete_discipline(id):
+    response, status_code = service.deleteDiscipline(id)
+    return response, status_code
+
+@app.route('/schedule/<int:id>', methods=['DELETE'])
+def delete_shedule_record_by_id(id):
+    response, status_code = service.deleteScheduleRecordById(id)
+    return response, status_code
+
+@app.route('/schedule/<string:day>', methods=['DELETE'])
+def delete_shedule_record_by_day(day):
+    response, status_code = service.deleteScheduleRecordsByDayCode(day)
+    return response, status_code
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=9001)
+
+
+    
