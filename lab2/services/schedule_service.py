@@ -80,3 +80,23 @@ class ScheduleService :
             return jsonify({"error": "Database error", "message": str(e)}), 500
         except Exception as e:
             return jsonify({"error": "Internal server error", "message": str(e)}), 500
+    
+    def addScheduleRecord(self, record):
+        try:
+            newRecord = Schedule(discipline_id=record.discipline_id, day_code=record.day_code, time=record.time)
+            self.session.add(newRecord)
+            self.session.commit()
+            self.session.refresh(newRecord)
+            self.session.close()
+
+            return jsonify({
+                "id": newRecord.id,
+                "discipline_id": newRecord.discipline_id,
+                "day_code": newRecord.day_code,
+                "time": newRecord.time
+            }), 201
+        except IntegrityError as e:
+            self.session.rollback() 
+            return jsonify({"error": "Database error", "message": str(e)}), 500
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500
