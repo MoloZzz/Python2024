@@ -58,12 +58,12 @@ def delete_shedule_record_by_id(id):
     return response, status_code
 
 @app.route('/schedule/day/<string:day>', methods=['DELETE'])
-def delete_shedule_record_by_day(day):
+def delete_shedule_records_by_day(day):
     response, status_code = service.deleteScheduleRecordsByDayCode(day)
     return response, status_code
 
 @app.route('/schedule/professor', methods=['DELETE'])
-def delete_shedule_record_by_professor():
+def delete_shedule_records_by_professor():
     response, status_code = service.deleteScheduleRecordsByProfessor(request.json["professor"])
     return response, status_code
 
@@ -72,6 +72,9 @@ def delete_disciplines_by_professor():
     response, status_code = service.deleteDisciplinesByProfessor(request.json["professor"])
     return response, status_code
 
+@app.route('/schedule/professor', methods=['GET'])
+def get_shedule_records_by_professor():
+    return service.getSheduleRecordsByProfessor(request.json["professor"])
 
 
 if __name__ == '__main__':

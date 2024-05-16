@@ -202,3 +202,21 @@ class ScheduleService :
             return jsonify({"error": "Database error", "message": str(e)}), 500
         except Exception as e:
             return jsonify({"error": "Internal server error", "message": str(e)}), 500
+
+    def getSheduleRecordsByProfessor(self, professor):
+        try:
+            schedule_records = self.session.query(Schedule).join(Discipline).filter(Discipline.professor == professor).all()
+            if schedule_records:
+                schedule_records_list = []
+                for record in schedule_records:
+                    discipline_name = self.session.query(Discipline.name).filter_by(id=record.discipline_id).scalar()
+                    schedule_records_list.append({
+                        "discipline": discipline_name,
+                        "day": record.day_code,
+                        "time": record.time
+                    })
+                return jsonify(schedule_records_list), 200
+            else:
+                return jsonify({"error": f"No schedule records found for professor {professor}"}), 404
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500
