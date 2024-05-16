@@ -20,13 +20,7 @@ def get_all_disciplines():
 def add_schedule_record():
     try:
         data = request.json
-        discipline_id = data.get('discipline_id')
-        day_code = data.get('day_code')
-        time = data.get('time')
-
-        scheduleRecord_dto = scheduleRecordDTO(disciplineId=discipline_id, dayCode=day_code, time=time)
-        
-        return service.addScheduleRecord(scheduleRecord_dto)
+        return service.addScheduleRecord(scheduleRecordDTO(disciplineId=data.get('discipline_id'), dayCode=data.get('day_code'), time=data.get('time')))
     except ValueError as e:
         return jsonify({"error": "Invalid input", "message": str(e)}), 400
     
