@@ -12,6 +12,28 @@ class ScheduleService :
         self.app = app
         handle_exception(self.app)
 
+    
+    def getSheduleRecordById(self,id, jsonify_result=True):
+        try:
+            scheduleRecord = self.session.query(Schedule).filter_by(id=id).first()  
+            if scheduleRecord:
+                disciplineRecord = self.getOneDisciplineById(scheduleRecord.discipline_id,False)
+                result = {
+                    "id": scheduleRecord.id,
+                    "discipline": disciplineRecord["name"],
+                    "professor": disciplineRecord["professor"],
+                    "day_code": scheduleRecord.day_code,
+                    "time": scheduleRecord.time
+                }
+                if jsonify_result:
+                    return jsonify(result), 200
+                else:
+                    return result
+            else:
+                return jsonify({"error": "Discipline not found"}), 404 if jsonify_result else None
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500 if jsonify_result else None
+
     def getOneDisciplineById(self, id, jsonify_result=True):
         try:
             discipline = self.session.query(Discipline).filter_by(id=id).first()  
@@ -218,5 +240,27 @@ class ScheduleService :
                 return jsonify(schedule_records_list), 200
             else:
                 return jsonify({"error": f"No schedule records found for professor {professor}"}), 404
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500
+
+    def updateSheduleRecordById(self, id, update_dto):
+        try:
+            schedule_record = self.session.query(Schedule).filter_by(id=id).first()
+            if schedule_record:
+                if(update_dto.discipline_id):
+                    schedule_record.discipline_id = update_dto.discipline_id
+                if(update_dto.day_code):    
+                    schedule_record.day_code = update_dto.day_code
+                if(update_dto.time):    
+                    schedule_record.time = update_dto.time
+                self.session.commit()
+                self.session.close()
+                
+                return jsonify({"message": f"Schedule record with id {id} updated successfully"}), 200
+            else:
+                return jsonify({"error": f"Schedule record with id {id} not found"}), 404
+        except IntegrityError as e:
+            self.session.rollback()
+            return jsonify({"error": "Database error", "message": str(e)}), 500
         except Exception as e:
             return jsonify({"error": "Internal server error", "message": str(e)}), 500

@@ -1,4 +1,5 @@
 from flask import jsonify, request, Flask
+from dto.updateScheduleRecordDTO import ScheduleRecordUpdateDTO
 from middleware.ErrorHandler import handle_exception
 from services.schedule_service import ScheduleService
 from dto.discipline import disciplineDTO
@@ -46,6 +47,11 @@ def delete_discipline(id):
     response, status_code = service.deleteDiscipline(id)
     return response, status_code
 
+@app.route('/schedule/<int:id>', methods=['GET'])
+def get_shedule_record_by_id(id):
+    response, status_code = service.getSheduleRecordById(id)
+    return response, status_code
+
 @app.route('/schedule/<int:id>', methods=['DELETE'])
 def delete_shedule_record_by_id(id):
     response, status_code = service.deleteScheduleRecordById(id)
@@ -69,6 +75,18 @@ def delete_disciplines_by_professor():
 @app.route('/schedule/professor', methods=['GET'])
 def get_shedule_records_by_professor():
     return service.getSheduleRecordsByProfessor(request.json["professor"])
+
+@app.route('/schedule/<int:id>', methods=['PATCH'])
+def update_shedule_record_by_id(id):
+    try:
+        data = request.json
+        return service.updateSheduleRecordById(id, ScheduleRecordUpdateDTO(
+            discipline_id = data.get('discipline_id'),
+            day_code = data.get('day_code'),
+            time = data.get('time')
+        ))
+    except ValueError as e:
+        return jsonify({"error": "Invalid input", "message": str(e)}), 400
 
 
 if __name__ == '__main__':
