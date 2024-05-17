@@ -264,3 +264,27 @@ class ScheduleService :
             return jsonify({"error": "Database error", "message": str(e)}), 500
         except Exception as e:
             return jsonify({"error": "Internal server error", "message": str(e)}), 500
+        
+    def updateDisciplineById(self,id,discipline_dto):
+        try:
+            discipline = self.session.query(Discipline).filter_by(id=id).first()
+            if discipline:
+                if(not discipline_dto.name and not discipline_dto.professor and not discipline_dto.credits ):
+                    return jsonify({"message": f"Body(at least one of name, professor, credits) is required"}), 404
+                if(discipline_dto.name):
+                    discipline.name = discipline_dto.name
+                if(discipline_dto.professor):    
+                    discipline.professor = discipline_dto.professor
+                if(discipline_dto.credits):    
+                    discipline.credits = discipline_dto.credits
+                self.session.commit()
+                self.session.close()
+                
+                return jsonify({"message": f"Discipline record with id {id} updated successfully"}), 200
+            else:
+                return jsonify({"error": f"Discipline record with id {id} not found"}), 404
+        except IntegrityError as e:
+            self.session.rollback()
+            return jsonify({"error": "Database error", "message": str(e)}), 500
+        except Exception as e:
+            return jsonify({"error": "Internal server error", "message": str(e)}), 500
