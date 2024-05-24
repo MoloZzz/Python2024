@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <title>Schedule</title>
 </head>
 <body>
     <div class="container">
         <div class="column" id="add_discipline">
             <h2>Додати дисципліну</h2>
-            <form id="add_discipline_form">
-                <label for="discipline_name">Назва дисципліни:</label>
-                <input type="text" id="discipline_name" name="discipline_name" required>
+            <form id="add_discipline_form" method="post" action="{% url 'add_discipline' %}">
+                {% csrf_token %}
+                <label for="name">Назва дисципліни:</label>
+                <input type="text" id="name" name="name" required>
                 <br>
                 <label for="professor">Професор:</label>
                 <input type="text" id="professor" name="professor" required>
@@ -23,13 +25,22 @@
                 <br>
                 <button type="submit">Додати</button>
             </form>
+            {% if error_message %}
+                <p>{{ error_message }}</p>
+            {% endif %}
         </div>
         <div class="column" id="add_to_day">
             <h2>Додати дисципліну до дня</h2>
-            <form id="add_to_day_form" method="post" action="{% url 'add_schedule' 'day' %}">
+            <form id="add_to_day_form" method="post" action="{% url 'add_schedule' %}">
                 {% csrf_token %}
                 <label for="time">Час:</label>
-                <input type="text" id="time" name="time" required>
+                <select id="time" name="time" required>
+                    <option value="8:40 - 10:10">8:40 - 10:10</option>
+                    <option value="10:35 - 12:05">10:35 - 12:05</option>
+                    <option value="12:20 - 14:05">12:20 - 14:05</option>
+                    <option value="14:20 - 16:00">14:20 - 16:00</option>
+                    <option value="16:10 - 18:00">16:10 - 18:00</option>
+                </select>
                 <br>
                 <label for="discipline">Дисципліна:</label>
                 <select id="discipline" name="discipline" required>
@@ -38,36 +49,51 @@
                     {% endfor %}
                 </select>
                 <br>
+                <label for="day">День тижня:</label>
+                <select id="day" name="day" required>
+                    <option value="Monday">Понеділок</option>
+                    <option value="Tuesday">Вівторок</option>
+                    <option value="Wednesday">Середа</option>
+                    <option value="Thursday">Четвер</option>
+                    <option value="Friday">П'ятниця</option>
+                </select>
+                <br>
                 <button type="submit">Додати</button>
             </form>
-
         </div>
         <div class="column" id="edit_schedule">
             <h2>Редагування(по ID)</h2>
             <!-- Тут можуть бути елементи для редагування та видалення -->
         </div>
     </div>
-<table>
-    <thead>
-        <tr>
-            <th>Понеділок</th>
-            <th>Вівторок</th>
-            <th>Середа</th>
-            <th>Четвер</th>
-            <th>П'ятниця</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for day in days_of_week %}
-            <tr>
-                {% for schedule in schedules %}
-                    {% if schedule.day.code == day.code %}
-                        <td>{{ schedule.discipline.name }}</td>
-                    {% endif %}
+    <div class="container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Понеділок</th>
+                    <th>Вівторок</th>
+                    <th>Середа</th>
+                    <th>Четвер</th>
+                    <th>П'ятниця</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for time_slot in time_slots %}
+                    <tr>
+                        {% for day in days_of_week %}
+                            <td>
+                                {% for schedule in schedules %}
+                                    {% if schedule.day.code == day.code and schedule.time == time_slot %}
+                                        {{ schedule.discipline.name }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

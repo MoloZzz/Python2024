@@ -112,3 +112,14 @@ footer {
     padding: 20px 0;
     background-color: #ddd;
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Об'єднуємо рамки таблиці */
+}
+
+th, td {
+    width: 20%;
+    border: 1px solid black; /* Додаємо рамку для кращого відображення */
+    text-align: center; /* Вирівнюємо текст по центру */
+}
